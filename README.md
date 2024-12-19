@@ -1,12 +1,12 @@
 # Weather Prediction using PyTorch
 
-A multi-layer perceptron (MLP) model for predicting weather conditions using PyTorch. This project demonstrates the application of machine learning for forecasting weather metrics based on historical data.
+A multi-layer perceptron (MLP) model for predicting rain forecase for the following weeks in Vancouver region using PyTorch.
 
 ## Features
 
 - Implementation of an MLP in PyTorch.
-- Preprocessing of weather data for model input.
-- Training, validation, and testing pipelines.
+- Preprocessing of live weather data for model input.
+- Training, validation, and testing of model.
 - Visualization of model performance metrics.
 
 ## Installation
@@ -14,114 +14,38 @@ A multi-layer perceptron (MLP) model for predicting weather conditions using PyT
 To run this project, you need to have Python 3.8+ installed along with the following dependencies:
 
 ```bash
-pip install torch torchvision numpy pandas matplotlib scikit-learn
+pip install flask flask-cors torch numpy pandas scikit-learn requests requests-cache retry-requests openmeteo_requests
+
 ```
 
 ## Dataset
 
-The project uses a weather dataset that includes historical weather features such as temperature, humidity, wind speed, etc. Ensure the dataset is in CSV format and includes the required features.
+The model is trained on high-resolution hourly weather data obtained from OpenMeteo's API for Vancouver, British Columbia. This data provides detailed, granular insights into various meteorological variables, ensuring the model has access to precise and timely information. The dataset includes the following key parameters:
 
-## Usage
+- **Temperature at 2 meters above ground**: Captures the air temperature near the surface, a critical metric for predicting weather patterns.
+- **Relative Humidity at 2 meters**: Reflects the moisture content in the air, which can influence precipitation levels and rain classification.
+- **Rainfall**: Provides the amount of rain in millimeters per hour, a central feature for categorizing rain into different intensities such as "No Rain," "Light Rain," and "Moderate/Heavy Rain."
+- **Dew Point**: Indicates the temperature at which air becomes saturated with moisture, which helps predict fog and precipitation.
+- **Wind Speed at 80 meters above ground**: Offers insights into wind behavior, a significant factor in weather dynamics.
+- **Cloud Cover**: Measures the percentage of sky covered by clouds, influencing sunlight exposure and weather conditions.
+- **Surface Pressure**: Reflects atmospheric pressure at the surface level, aiding in weather forecasting and storm prediction.
 
-### 1. Clone the Repository
+The use of high-resolution hourly data ensures the model captures subtle changes in weather conditions, enabling it to make accurate predictions. By training on data specific to Vancouver, BC, the model learns localized weather patterns, such as how certain combinations of variables typically lead to rain in this region.
 
-```bash
-git clone https://github.com/yourusername/weather-prediction-mlp.git
-cd weather-prediction-mlp
-```
+### Data Preprocessing
+Before training, the raw data undergoes preprocessing steps:
+1. **Normalization**: To bring all features to a comparable scale using MinMaxScaler.
+2. **Rain Categorization**: Converts raw rainfall values into discrete categories:
+   - **No Rain**: 0 mm/h
+   - **Light Rain**: >0 mm/h to ≤2.5 mm/h
+   - **Moderate/Heavy Rain**: >2.5 mm/h
+3. **Hourly Aggregation**: Every two consecutive hourly data points are combined into one by taking the maximum value, reducing noise and improving model robustness.
 
-### 2. Prepare the Dataset
+### Training Goal
+The model is designed to predict rain categories based on meteorological inputs.
 
-Place your dataset in the `data/` directory and update the file path in the script.
+By leveraging OpenMeteo’s data and combining it with neural network techniques, this model offers weather predictions for Vancouver, BC.
 
-### 3. Train the Model
 
-Run the following command to train the MLP model:
-
-```bash
-python train.py
-```
-
-### 4. Evaluate the Model
-
-After training, evaluate the model using:
-
-```bash
-python evaluate.py
-```
-
-### 5. Visualize Results
-
-View the training and validation loss curves and other performance metrics:
-
-```bash
-python visualize.py
-```
-
-## Project Structure
-
-```plaintext
-weather-prediction-mlp/
-|— data/                 # Dataset folder
-|— models/               # Model definition
-|— utils/                # Helper functions
-|— train.py             # Training script
-|— evaluate.py          # Evaluation script
-|— visualize.py         # Visualization script
-|— README.md            # Project documentation
-```
-
-## Model Architecture
-
-The MLP consists of:
-
-- Input layer matching the number of features in the dataset.
-- One or more hidden layers with ReLU activation.
-- Output layer for predicting weather metrics.
-
-Example:
-
-```python
-import torch
-import torch.nn as nn
-
-class WeatherMLP(nn.Module):
-    def __init__(self, input_size, hidden_size, output_size):
-        super(WeatherMLP, self).__init__()
-        self.fc1 = nn.Linear(input_size, hidden_size)
-        self.relu = nn.ReLU()
-        self.fc2 = nn.Linear(hidden_size, output_size)
-
-    def forward(self, x):
-        x = self.relu(self.fc1(x))
-        x = self.fc2(x)
-        return x
-```
-
-## Results
-
-- **Training Loss**: [value]
-- **Validation Loss**: [value]
-- **Test Accuracy**: [value]
-
-Add visualizations of loss and predictions in your report for better understanding.
-
-## Future Work
-
-- Add hyperparameter tuning.
-- Experiment with different model architectures.
-- Include additional weather features for better accuracy.
-
-## License
-
-This project is licensed under the MIT License. See the `LICENSE` file for details.
-
-## Acknowledgments
-
-- PyTorch Documentation
-- Scikit-learn Library
-- [Dataset Source](#)
-
----
 
 Feel free to contribute to the project by submitting issues or pull requests!
