@@ -2,6 +2,8 @@
 
 A multi-layer perceptron (MLP) model for predicting rain forecase for the following weeks in Vancouver region using PyTorch.
 
+![Alt text](/demo.png)
+
 ## Features
 
 - Implementation of an MLP in PyTorch.
